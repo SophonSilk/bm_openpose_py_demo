@@ -11,7 +11,7 @@
 #include "pose_post_process.hpp"
 
 
-#define DUMP_OUTDATA 1
+#define DUMP_OUTDATA 0
 #define SHOW_FROME_FILE 0
 static int framecnt = 0;
 void paint_image_single(cv::Mat &ori_img, std::vector<float> &predictions);

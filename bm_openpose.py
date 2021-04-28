@@ -106,9 +106,6 @@ class Net:
     Net.lib_post_process_ = ll('./post_process_lib/libPostProcess.so')
     Net.lib_post_process_.post_process_hello()
 
-    if os.path.exists('result_imgs') is False:
-      os.system('mkdir -p result_imgs')
-
   def cut(obj, sec):
     return [obj[i : i + sec] for i in range(0, len(obj), sec)]
 
@@ -170,9 +167,6 @@ class Net:
       np_t_img_tensor = np_t_img_tensor.reshape([img.height(), img.width(), 3])
       ori_img = np.uint8(np_t_img_tensor)
       ori_img = ori_img.ctypes.data_as(ctypes.c_char_p)
-      #cv2.imshow('det_result', np.uint8(np_t_img_tensor))
-      #cv2.imwrite("tensor.jpg", np.uint8(np_t_img_tensor))
-      #cv2.waitKey(10)
       ##############################################
 
       #print( Net.output_shapes_)
@@ -205,12 +199,4 @@ if __name__ == '__main__':
   #print("path:", load_param['videos'][1]['video_path'])
   openpose_net = Net(load_param['bmodel_path'], args.tpu_id, load_param['bmodel_stage'])
   openpose_net.detect(load_param['videos'][0]['video_path'])
-"""
-  ARGS = PARSER.parse_args()
-  if not os.path.isfile(ARGS.input):
-    print("Error: {} not exists!".format(ARGS.input))
-    sys.exit(-2)
-  openpose_net = Net(ARGS.bmodel, ARGS.tpu_id)
-  openpose_net.detect(ARGS.input)
-"""
 
