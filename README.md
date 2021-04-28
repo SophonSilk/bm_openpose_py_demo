@@ -1,6 +1,7 @@
 # bm_yolo_py_demo 使用说明
 
 使用到的API主要可以参考文档 sdk路径/documents/Sophon_Inference_zh.pdf
+
 开发环境配置参考文档：https://bitmain-doc.gitbook.io/bmnnsdk2-bm1684/on-linux
 
 python版本支持 3.5 - 3.8
@@ -22,6 +23,7 @@ python版本支持 3.5 - 3.8
      pip3 install sophon ./lib/sail/python3/pcie/py35/sophon-2.2.0-py3-none-any.whl
 
 2. 编译c++ so
+
      运行编译脚本，目前仅支持pcie模式
      ./build_lib.sh
 3. 执行demo
