@@ -25,6 +25,7 @@ python版本支持 3.5 - 3.8
 2. 编译c++ so
 
      运行编译脚本，目前仅支持pcie模式
+
      ./build_lib.sh
 3. 执行demo
 
