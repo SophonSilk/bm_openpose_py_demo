@@ -1,0 +1,38 @@
+#top_dir = ../../..
+sdk_dir = ${REL_TOP}
+#install_dir = $(top_dir)/install
+CXX = g++
+
+INC_DIR += -I$(sdk_dir)/include
+INC_DIR += -I$(sdk_dir)/include/bmlib
+INC_DIR += -I$(sdk_dir)/include/bmruntime
+INC_DIR += -I/usr/local/include
+INC_DIR += -I/usr/local/include/opencv4
+#INC_DIR += -I$(sdk_dir)/include/opencv/opencv4
+
+#LIB_DIR+= -L$(sdk_dir)/lib/opencv/x86
+LIB_DIR += -L/usr/local/lib
+LDFLAGS += -Wl,-rpath=/usr/local/lib
+LDFLAGS += $(LIB_DIR)
+
+CXXFLAGS := -g -fPIC -lpthread -O2 -Wall -std=c++11 $(INC_DIR) #-D_GLIBCXX_USE_CXX11_ABI=0
+LOCAL_MEM_ADDRWIDTH           ?= 19
+CXXFLAGS += -DCONFIG_LOCAL_MEM_ADDRWIDTH=$(LOCAL_MEM_ADDRWIDTH)
+
+LDLIBS := -lpthread -ldl -lopencv_core -lopencv_imgproc -lopencv_videoio -lopencv_highgui
+
+SOURCE:=$(wildcard *.cpp)
+OBJS:=$(patsubst %.cpp,%.o,$(SOURCE))
+TARGET_LIB   = libPostProcess.so 
+
+
+all:$(OBJS)
+	echo $(OBJS)
+	$(CXX) -shared -fPIC -o $(TARGET_LIB) $(OBJS)  $(LDLIBS) $(LDFLAGS)
+ 
+%.o:%.cpp
+	@echo Compiling $< ...
+	$(CXX) -c $(CXXFLAGS) $< -o $*.o
+
+clean:
+	rm -f *.o *.so

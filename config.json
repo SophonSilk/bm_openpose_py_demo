@@ -1,0 +1,16 @@
+{
+  "frams_to_skip": 3,
+  "bmodel_path": "./bmodel/openpose_216_384.bmodel",
+  "bmodel_stage": 0,
+  "videos": [
+    {
+      "video_type": 0,
+      "video_path": "./data/yinti-2.mp4",
+      "window_x": 100,
+      "window_y": 100,
+      "window_w": 800,
+      "window_h": 500
+    }
+  ]
+}
+
