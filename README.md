@@ -1,4 +1,4 @@
-# bm_yolo_py_demo 使用说明
+# bm_openpose_py_demo 使用说明
 
 使用到的API主要可以参考文档 sdk路径/documents/Sophon_Inference_zh.pdf
 
