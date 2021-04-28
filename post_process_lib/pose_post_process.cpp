@@ -15,88 +15,6 @@
 #define SHOW_FROME_FILE 0
 static int framecnt = 0;
 void paint_image_single(cv::Mat &ori_img, std::vector<float> &predictions);
-#if 0
-void post_process_1(
-        char inputs[],
-        int net_n,
-        int origin_imgw,
-        int origin_imgh,
-        int net_inw,
-        int net_inh,
-        int net_outw,
-        int net_outh,
-        int input_tensor_num,
-        int out_size)
-{
-    float netoutdata[out_size];
-    float scale_to_float =0.0099951f;
-    float nms_scale;
-    int newh = net_inh;
-    float s = net_inh / (float)origin_imgh;
-    int neww = origin_imgw * s;
-    //printf("%d,%d,%d,%d,%d,%d\r\n",origin_imgw, origin_imgh,net_inw, net_inh,net_outw,net_outh);
-    if (neww > net_inw)
-    {
-        neww = net_inw;
-        s = neww / (float)origin_imgw;
-        newh = origin_imgh * s;
-    }
-    nms_scale = 1 / s;
-
-    std::vector<int> tensor_sizes;
-    /*std::vector<float*> f_inputs;
-    for(size_t i = 0; i < input_tensor_num; i++) {
-        long ptr = (long)inputs[i];
-        f_inputs.push_back((float*)ptr);
-    }*/
-    /*std::vector<float*> blobs;
-    for(size_t j = 0; j < input_tensor_num; j++) {
-        float* tmp_ptr = (float*)f_inputs[j];
-        blobs.push_back(tmp_ptr + tensor_sizes[j]);
-    }*/
-    std::vector<char*> i_inputs;
-    for(size_t i = 0; i < input_tensor_num; i++) {
-        char ptr = (char)inputs[i];
-        i_inputs.push_back((char*)ptr);
-    }
-    char filename[50];
-    sprintf(filename, "outdata/py_int_%d.txt", framecnt);
-    FILE *file_handle = fopen(filename, "w");
-    /*if (file_handle != NULL) {
-        fwrite(i_inputs[0], (net_outh*57*net_outw), 1, file_handle);
-        fclose(file_handle);
-    }*/    
-    //get output data from python
-    for(int i=0;i< 1*net_outh*57*net_outw;i++) {
-        //float data=(float)(host_output[i]);
-        //netoutdata[i]=data*scale_to_float;
-        //netoutdata[i]= blobs[0][i]*scale_to_float;
-        fprintf(file_handle, "%d\n", i_inputs[0][i]);
-        //netoutdata[i] = f_inputs[0][i]*scale_to_float;
-    }
-    fclose(file_handle);
-    /*char filename[50];
-    sprintf(filename, "outdata/output_%d.txt", framecnt);
-    FILE *file_handle = fopen(filename, "wb");
-    if (file_handle != NULL) {
-        fwrite(netoutdata, (net_outh*57*net_outw), 1, file_handle);
-        fclose(file_handle);
-    }*/
-    framecnt+=1;
-    //post process
-    float* current;
-    std::vector<cv::Mat> ret_images;
-    std::vector<float> prediction;
-    for (int i=0;i< input_tensor_num;i++) {
-        current = netoutdata + i*net_outh*57*net_outw;
-        cv::Mat netimage=cv::Mat(net_outh*57,net_outw ,CV_32FC1,current).clone();
-        ret_images.push_back(netimage);
-        prediction = NMSCON(netimage, nms_scale, net_inh, net_inw);
-    }
-    std::cout << "prediction numbers " << prediction.size() << std::endl;
-}
-#endif
-
 int post_process_1(
         long inputs[],
         int net_n,
@@ -140,8 +58,6 @@ int post_process_1(
 #endif
     //get output data from python
     for(int i=0;i< 1*net_outh*57*net_outw;i++) {
-        //float data=(float)(host_output[i]);
-        //netoutdata[i]=data*scale_to_float;
 #if DUMP_OUTDATA
         fprintf(file_handle, "%d\n", i_inputs[0][i]);
 #endif
@@ -158,7 +74,7 @@ int post_process_1(
     for (int i=0;i< input_tensor_num;i++) {
         current = netoutdata + i*net_outh*57*net_outw;
         cv::Mat netimage=cv::Mat(net_outh*57,net_outw ,CV_32FC1,current).clone();
-        cv::imwrite("feature.jpg", netimage);
+        //cv::imwrite("feature.jpg", netimage);
         ret_images.push_back(netimage);
         prediction = NMSCON(netimage, nms_scale, net_inh, net_inw);
     }
@@ -166,23 +82,8 @@ int post_process_1(
         //std::cout << "prediction numbers " << prediction.size() << std::endl;
 
 #if !SHOW_FROME_FILE
-    //cv::Mat origin(origin_imgh, origin_imgw, CV_8SC3, (void *)ori_image);
-    //cv::Mat origin = cvarrToMat(ori_image);
-#if 0
-    const Py_intptr_t* shape = ndarr.get_shape();
-    int rows = shape[0];
-    int cols = shape[1];
-    int channel = shape[2];
-    int depth;
-
-    //cv::Mat origin(origin_imgh, origin_imgw, CV_8SC3);
-    int type = CV_MAKETYPE(depth, channel);
-    cv::Mat origin(rows, cols, CV_8SC3);
-    memcpy(origin.data, ndarr.get_data(), sizeof(uchar) * rows * cols * channel);
-#endif
     std::vector<cv::Mat> channels;
     int offset = 0;
-    //for (int ch = 0; ch < 3; ch++) {
     offset = origin_imgh * origin_imgw;
     cv::Mat channel0(origin_imgh, origin_imgw, CV_8UC1, (void *)(ori_image + offset*0));
     channels.push_back(channel0);
@@ -192,9 +93,7 @@ int post_process_1(
     channels.push_back(channel2);
     cv::Mat origin(origin_imgh, origin_imgw, CV_8UC3);
     cv::merge(channels, origin);
-    //}
-    //cv::Mat origin(origin_imgh, origin_imgw, CV_8SC3, (void *)ori_image);
-    cv::imwrite("python.jpg", origin);
+    //cv::imwrite("python.jpg", origin);
     paint_image_single(origin, prediction);
 #else
     cv::Mat origin;
